@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI / Codex / Coding Agents 早报</title>
+    <meta
+      name="description"
+      content="面向 AI、Codex 与 Coding Agents 实践者的每日早报静态页面。"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="topbar" aria-label="站点导航">
+        <a class="brand" href="index.html" aria-label="返回早报首页">
+          <span class="brand-mark" aria-hidden="true">AI</span>
+          <span>Daily Brief</span>
+        </a>
+        <a class="nav-link" href="prompts/daily-brief.md">每日 Prompt</a>
+      </nav>
+
+      <section class="hero-content" aria-labelledby="page-title">
+        <p class="eyebrow">AI / Codex / Coding Agents</p>
+        <h1 id="page-title">早报雷达</h1>
+        <p class="hero-copy">
+          聚合最近 7 天关于 OpenAI、Codex、Coding Agents、MCP 与 AI 工具的关键动态，
+          帮你快速判断“为什么重要”以及“我可以怎么用”。
+        </p>
+        <div class="hero-stats" aria-label="早报概览">
+          <span><strong id="total-count">0</strong> 条动态</span>
+          <span><strong>7</strong> 天窗口</span>
+          <span><strong>0</strong> 后端依赖</span>
+        </div>
+      </section>
+    </header>
+
+    <main class="container">
+      <section class="toolbar" aria-label="筛选与搜索">
+        <div class="search-field">
+          <label for="search-input">关键词搜索</label>
+          <input
+            id="search-input"
+            type="search"
+            placeholder="搜索标题、来源、重要性或使用建议…"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="category-field">
+          <label for="category-filter">分类筛选</label>
+          <select id="category-filter">
+            <option value="all">全部分类</option>
+            <option value="OpenAI">OpenAI</option>
+            <option value="Codex">Codex</option>
+            <option value="Coding Agents">Coding Agents</option>
+            <option value="MCP">MCP</option>
+            <option value="AI Tools">AI Tools</option>
+            <option value="Content Creation">Content Creation</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="status-row" aria-live="polite">
+        <p id="result-summary">正在加载最近 7 天早报…</p>
+        <button id="reset-filters" type="button">重置筛选</button>
+      </section>
+
+      <section id="brief-list" class="brief-grid" aria-label="最近 7 天早报列表"></section>
+
+      <template id="brief-card-template">
+        <article class="brief-card">
+          <div class="card-meta">
+            <div class="tag-row">
+              <span class="category"></span>
+              <span class="sample-badge" hidden>Sample</span>
+            </div>
+            <time></time>
+          </div>
+          <h2></h2>
+          <a class="source-link" target="_blank" rel="noopener noreferrer"></a>
+          <div class="card-section">
+            <h3>为什么重要</h3>
+            <p class="why"></p>
+          </div>
+          <div class="card-section">
+            <h3>我可以怎么用</h3>
+            <p class="usage"></p>
+          </div>
+        </article>
+      </template>
+
+      <section id="empty-state" class="empty-state" hidden>
+        <h2>没有匹配的早报</h2>
+        <p>试试清空关键词，或切换到“全部分类”。</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>使用纯 HTML + CSS + JavaScript 构建，可直接部署到 GitHub Pages。</p>
+    </footer>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-05-31T08:00:00Z",
+  "date": "YYYY-MM-DD",
+  "isSample": true,
+  "note": "Sample template only. Replace every sample field with verified real sources before publishing.",
+  "briefs": [
+    {
+      "date": "YYYY-MM-DD",
+      "title": "[Sample] 示例标题：替换为经过验证的真实动态",
+      "sourceName": "Sample Source - replace before publishing",
+      "sourceUrl": "https://example.com/sample/source",
+      "category": "OpenAI",
+      "whatHappened": "Sample：这里写发生了什么。发布真实日报前必须替换为可验证事实。",
+      "whyItMatters": "Sample：这里写为什么重要。不要编造真实新闻或链接。",
+      "howToUse": "Sample：这里写可以怎么用。请给出可执行建议。",
+      "isSample": true
+    }
+  ]
+}
