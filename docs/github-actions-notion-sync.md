@@ -1,6 +1,12 @@
 # GitHub Actions 同步 Notion 设计
 
-当前阶段先不启用自动同步，只记录未来方案。原因是：自动写入 Notion 属于真实外部副作用，需要先本地 dry-run 验证 JSON 结构和字段映射。
+仓库已经包含 GitHub Actions workflow：
+
+```text
+.github/workflows/daily-notion-sync.yml
+```
+
+当前 workflow 会每天北京时间 8:00 自动运行。它会先执行 mock 测试和 dry-run；只有在 GitHub Secrets 中配置了 `NOTION_TOKEN` 和 `NOTION_DATABASE_ID` 时，才会执行真实 Notion 同步。
 
 ## Secrets 配置
 
@@ -42,9 +48,9 @@ on:
   workflow_dispatch:
 ```
 
-## 未来 Workflow 草案
+## Workflow 结构
 
-先不要直接提交到 `.github/workflows`。确认本地真实同步可用后，再启用类似流程：
+当前 workflow 的核心结构：
 
 ```yaml
 name: Daily AI Brief to Notion
@@ -67,14 +73,11 @@ jobs:
 
       - run: npm ci
 
-      - name: Generate daily brief JSON
-        run: |
-          echo "TODO: generate reports/$(date -u +%F).json and data/$(date -u +%F).json"
-
       - name: Dry-run Notion mapping
         run: npm run notion:dry-run
 
       - name: Sync to Notion
+        if: ${{ env.NOTION_TOKEN != '' && env.NOTION_DATABASE_ID != '' }}
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}

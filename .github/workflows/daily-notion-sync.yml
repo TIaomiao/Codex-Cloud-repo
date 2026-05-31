@@ -1,0 +1,54 @@
+name: Daily brief Notion sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      json_path:
+        description: "JSON file to sync"
+        required: false
+        default: "data/sample.json"
+  schedule:
+    # GitHub Actions uses UTC. 00:00 UTC = 08:00 Beijing time.
+    - cron: "0 0 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  notion-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      JSON_PATH: ${{ inputs.json_path || 'data/sample.json' }}
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+      NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate Notion mapping
+        run: npm run notion:test
+
+      - name: Dry-run Notion properties
+        run: node scripts/sync-to-notion.js "$JSON_PATH" --dry-run
+
+      - name: Sync to Notion
+        if: ${{ env.NOTION_TOKEN != '' && env.NOTION_DATABASE_ID != '' }}
+        run: node scripts/sync-to-notion.js "$JSON_PATH"
+
+      - name: Skip real sync when secrets are missing
+        if: ${{ env.NOTION_TOKEN == '' || env.NOTION_DATABASE_ID == '' }}
+        run: |
+          echo "NOTION_TOKEN or NOTION_DATABASE_ID is not configured."
+          echo "Dry-run completed; real Notion sync was skipped."

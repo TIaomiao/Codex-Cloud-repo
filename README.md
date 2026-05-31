@@ -223,6 +223,20 @@ npm run notion:dry-run
 node scripts/sync-to-notion.js data/YYYY-MM-DD.json --dry-run
 ```
 
+GitHub Actions 也已经预留了云端入口：
+
+```text
+.github/workflows/daily-notion-sync.yml
+```
+
+它会在每天北京时间 8:00 自动运行。由于 GitHub Actions 使用 UTC，workflow 中写的是 UTC 0:00：
+
+```yaml
+- cron: "0 0 * * *"
+```
+
+如果还没有配置 Notion secrets，workflow 会完成依赖安装、mock 测试和 dry-run，然后跳过真实同步。配置好 `NOTION_TOKEN` 和 `NOTION_DATABASE_ID` 后，同一个 workflow 会自动执行真实同步。
+
 ### 真实同步
 
 确认 dry-run 输出正确后，再运行：
@@ -231,7 +245,7 @@ node scripts/sync-to-notion.js data/YYYY-MM-DD.json --dry-run
 npm run notion:sync
 ```
 
-真实同步会：
+本地或 GitHub Actions 中的真实同步会：
 
 1. 读取 `NOTION_TOKEN` 和 `NOTION_DATABASE_ID`。
 2. 自动解析 Notion database 对应的 data source。
@@ -251,7 +265,7 @@ npm run notion:sync
 
 ## 后续接入 GitHub Actions 的思路
 
-后续可以增加一个定时工作流，让 GitHub Actions 每天自动生成或更新日报：
+仓库已经包含每天北京时间 8:00 运行的 Notion 同步 workflow。后续如果要把“生成真实早报 JSON”也完全自动化，可以继续扩展这个流程：
 
 1. 使用 `schedule` 触发器每天运行一次。
 2. 在工作流中调用早报生成脚本或 AI API，使用 `prompts/daily-brief.md` 作为提示词模板。
