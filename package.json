@@ -1,0 +1,16 @@
+{
+  "name": "ai-codex-coding-agents-brief",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static AI / Codex / Coding Agents daily brief with Notion database sync tooling.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "notion:dry-run": "node scripts/sync-to-notion.js data/sample.json --dry-run",
+    "notion:sync": "node scripts/sync-to-notion.js data/sample.json",
+    "notion:test": "node scripts/mock-notion-mapping.test.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "5.22.0"
+  }
+}
+

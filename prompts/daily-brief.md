@@ -84,11 +84,18 @@
 
 ```json
 {
+  "schema_version": "1.0",
   "generatedAt": "ISO-8601 时间",
   "date": "YYYY-MM-DD",
   "isSample": false,
+  "today_focus": "今日最重要的判断",
+  "practical_suggestions": ["今天可以执行的最小动作"],
+  "daily_reminder": "一句提醒",
+  "x_longform_topics": ["可转化为 X 长文的选题"],
+  "created_by": "codex",
   "briefs": [
     {
+      "id": "YYYY-MM-DD-source-topic-slug",
       "date": "YYYY-MM-DD",
       "title": "一句话标题",
       "sourceName": "来源名称",
@@ -97,11 +104,29 @@
       "whatHappened": "发生了什么",
       "whyItMatters": "为什么重要",
       "howToUse": "我可以怎么用",
+      "source_name": "来源名称",
+      "source_url": "https://example.com/source",
+      "source_type": "Official | GitHub | AIHOT | AI News Radar | Blog | X | Paper | Other",
+      "importance": "高 | 中 | 低",
+      "why_it_matters": "为什么重要",
+      "how_i_can_use_it": "我可以怎么用",
+      "actionable_advice": "可实操建议",
+      "x_longform_topic": "X 长文选题",
+      "status": "未读",
+      "worth_practicing": false,
+      "notes": "",
       "isSample": false
     }
   ]
 }
 ```
+
+说明：
+
+- `sourceName/sourceUrl/whyItMatters/howToUse` 用于兼容静态首页。
+- `source_name/source_url/why_it_matters/how_i_can_use_it` 等 snake_case 字段用于 Notion 同步。
+- 每条 brief 必须有稳定 `id`，用于 Notion 字段 `原始 JSON ID` 去重。
+- 如果当天没有值得单独关注的更新，`briefs` 输出空数组；同步脚本会生成“今天没有值得单独关注的更新”的特殊记录。
 
 ## 质量标准
 
@@ -110,4 +135,5 @@
 - 不要编造真实新闻；无法验证就不要收录。
 - 每条内容必须能回答“为什么重要”和“我可以怎么用”。
 - JSON 的 `category` 必须严格使用上述 6 个分类之一。
+- Notion 同步字段的 `source_type`、`importance`、`status` 必须使用上面列出的可选值。
 - 如果输出的是示例数据，必须把根字段和每条 brief 的 `isSample` 设置为 `true`，并在标题或摘要中明确标注 `Sample` / `示例`。

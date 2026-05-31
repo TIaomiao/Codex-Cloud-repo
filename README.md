@@ -12,14 +12,21 @@
 ├── index.html
 ├── style.css
 ├── app.js
+├── package.json
 ├── data/
 │   ├── sample.json
 │   └── YYYY-MM-DD.json
+├── docs/
+│   ├── notion-database-schema.md
+│   └── github-actions-notion-sync.md
 ├── prompts/
 │   └── daily-brief.md
-└── reports/
+├── reports/
     ├── .gitkeep
     └── YYYY-MM-DD.md
+└── scripts/
+    ├── sync-to-notion.js
+    └── mock-notion-mapping.test.js
 ```
 
 ## 本地预览
@@ -86,6 +93,7 @@ http://localhost:8000
 
 每条早报建议包含以下字段：
 
+- `id`：稳定 ID，用于 Notion 去重，建议格式为 `YYYY-MM-DD-source-topic-slug`
 - `date`：日期，格式为 `YYYY-MM-DD`
 - `title`：标题；示例数据必须包含 `[Sample]` 或同等标记
 - `sourceName`：来源名称
@@ -95,6 +103,20 @@ http://localhost:8000
 - `whyItMatters`：为什么重要
 - `howToUse`：我可以怎么用
 - `isSample`：是否为示例数据
+
+为了同步到 Notion，`data/sample.json` 也保留了对应的 snake_case 字段：
+
+- `source_name`
+- `source_url`
+- `source_type`
+- `importance`
+- `why_it_matters`
+- `how_i_can_use_it`
+- `actionable_advice`
+- `x_longform_topic`
+- `status`
+- `worth_practicing`
+- `notes`
 
 首页会以数据中的最新日期为基准，只展示最近 7 天内容；较旧内容可保留在 JSON 中作为归档数据。
 
@@ -107,6 +129,126 @@ http://localhost:8000
 - AI Tools
 - Content Creation
 
+Notion 数据库额外支持 `Research`、`Workflow`、`Other`，用于记录研究、流程改进和无法归入主分类的信息。
+
+## 同步到 Notion
+
+这个项目支持把每天早报同步到 Notion 数据库。推荐结构是：
+
+```text
+每条重要更新 = Notion 数据库中的一条记录
+```
+
+这样在 iPad 和手机上阅读时，可以逐条筛选、收藏、备注和复盘，而不是每次打开一整篇长日报。
+
+### 创建 Notion 数据库
+
+在 Notion 新建一个数据库，建议命名为：
+
+```text
+AI / Codex / Coding Agents 早报
+```
+
+字段设计见：
+
+```text
+docs/notion-database-schema.md
+```
+
+字段名需要和文档完全一致，例如 `标题`、`日期`、`分类`、`原始 JSON ID`。
+
+### 创建 Notion Integration
+
+1. 打开 Notion 的 integrations 页面。
+2. 新建 internal integration。
+3. 复制 integration secret。
+4. 只把 secret 放进环境变量，不要写入代码或提交到 GitHub。
+
+占位符示例：
+
+```text
+NOTION_TOKEN=secret_xxx
+```
+
+### 把数据库分享给 Integration
+
+进入 Notion 数据库页面，点击右上角 Share / Connections，把刚创建的 Integration 添加进来。
+
+如果没有这一步，脚本即使拿到 token，也可能遇到 404 或权限错误。
+
+### 获取 NOTION_DATABASE_ID
+
+打开数据库页面，复制页面链接。链接中通常包含一段数据库 ID。
+
+占位符示例：
+
+```text
+NOTION_DATABASE_ID=your_database_id
+```
+
+普通单数据源数据库只需要 `NOTION_TOKEN` 和 `NOTION_DATABASE_ID`。如果未来同一个 database 下有多个 data sources，脚本会提示你额外设置：
+
+```text
+NOTION_DATA_SOURCE_ID=your_data_source_id
+```
+
+### 本地设置环境变量
+
+PowerShell 当前窗口临时设置：
+
+```powershell
+$env:NOTION_TOKEN="secret_xxx"
+$env:NOTION_DATABASE_ID="your_database_id"
+```
+
+不要把真实 token 写进仓库。也不要把 `.env` 提交到 GitHub。
+
+### 安装依赖
+
+```bash
+npm install
+```
+
+### 运行 dry-run
+
+dry-run 只打印将要写入的 Notion properties，不调用 Notion API，也不需要 token：
+
+```bash
+npm run notion:dry-run
+```
+
+也可以指定 JSON 文件：
+
+```bash
+node scripts/sync-to-notion.js data/YYYY-MM-DD.json --dry-run
+```
+
+### 真实同步
+
+确认 dry-run 输出正确后，再运行：
+
+```bash
+npm run notion:sync
+```
+
+真实同步会：
+
+1. 读取 `NOTION_TOKEN` 和 `NOTION_DATABASE_ID`。
+2. 自动解析 Notion database 对应的 data source。
+3. 读取 JSON 文件。
+4. 按 `原始 JSON ID` 查询 Notion 是否已存在。
+5. 已存在则跳过，不重复创建。
+6. 不存在则创建一条 Notion 记录。
+
+### 常见错误排查
+
+- `Missing Notion configuration`：真实同步前没有设置 `NOTION_TOKEN` 或 `NOTION_DATABASE_ID`。
+- `object_not_found` 或 404：数据库没有分享给 Integration，或 database id 填错。
+- `validation_error`：Notion 字段名、字段类型、select 选项和 schema 不一致。
+- `multiple data sources`：同一个 database 下有多个 data sources，需要设置 `NOTION_DATA_SOURCE_ID`。
+- `Invalid source_url`：JSON 里的 `source_url` / `sourceUrl` 不是合法 URL。
+- 重复写入：检查每条 update 的 `id` 是否稳定，并确认 Notion 数据库里存在 `原始 JSON ID` 字段。
+
 ## 后续接入 GitHub Actions 的思路
 
 后续可以增加一个定时工作流，让 GitHub Actions 每天自动生成或更新日报：
@@ -116,8 +258,10 @@ http://localhost:8000
 3. 校验输出 JSON 是否包含必需字段，并确保 `category` 属于允许列表。
 4. 将 Markdown 写入 `reports/YYYY-MM-DD.md`，将 JSON 写入 `data/YYYY-MM-DD.json`。
 5. 视需要把最近 7 天数据聚合到首页读取的数据文件。
-6. 使用自动提交 Action 创建 commit 或 PR，人工审核后合并。
-7. 通过 GitHub Pages 部署本静态站点。
+6. 运行 `npm run notion:dry-run` 检查 Notion properties 映射。
+7. 使用 GitHub Secrets 中的 `NOTION_TOKEN` 和 `NOTION_DATABASE_ID` 同步到 Notion。
+8. 使用自动提交 Action 创建 commit 或 PR，人工审核后合并。
+9. 通过 GitHub Pages 部署本静态站点。
 
 示例触发器片段：
 
