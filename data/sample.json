@@ -1,0 +1,96 @@
+{
+  "generatedAt": "2026-05-31T08:00:00Z",
+  "date": "2026-05-31",
+  "isSample": true,
+  "note": "Sample data only. These entries are fictional examples for UI testing and are not real news.",
+  "briefs": [
+    {
+      "date": "2026-05-31",
+      "title": "[Sample] OpenAI 分类示例：结构化输出适合日报数据管道",
+      "sourceName": "Sample Source - OpenAI category",
+      "sourceUrl": "https://example.com/sample/openai",
+      "category": "OpenAI",
+      "whatHappened": "这是一条 Sample 示例，用于展示 OpenAI 分类卡片的字段结构，不代表真实新闻。",
+      "whyItMatters": "示例说明结构化 JSON 可以让静态站点稳定渲染标题、来源、分类和行动建议。",
+      "howToUse": "复制该字段结构，替换为经过验证的真实来源后，再加入每日早报数据。",
+      "isSample": true
+    },
+    {
+      "date": "2026-05-30",
+      "title": "[Sample] Codex 分类示例：小步任务更容易审查",
+      "sourceName": "Sample Source - Codex category",
+      "sourceUrl": "https://example.com/sample/codex",
+      "category": "Codex",
+      "whatHappened": "这是一条 Sample 示例，用于展示 Codex 分类，不代表真实产品公告。",
+      "whyItMatters": "把 Agent 任务拆小可以让人类审查者更快判断变更意图、测试范围和回滚方式。",
+      "howToUse": "在真实早报中记录可复现命令、修改范围和适合交给 Codex 的任务边界。",
+      "isSample": true
+    },
+    {
+      "date": "2026-05-29",
+      "title": "[Sample] Coding Agents 分类示例：多 Agent 分工需要明确边界",
+      "sourceName": "Sample Source - Coding Agents category",
+      "sourceUrl": "https://example.com/sample/coding-agents",
+      "category": "Coding Agents",
+      "whatHappened": "这是一条 Sample 示例，用于展示 Coding Agents 分类，不代表真实新闻。",
+      "whyItMatters": "多 Agent 协作只有在读写范围清晰时，才更容易避免重复劳动和冲突修改。",
+      "howToUse": "为真实项目建立“探索、实现、验证”三类任务模板，并要求每类输出验收证据。",
+      "isSample": true
+    },
+    {
+      "date": "2026-05-28",
+      "title": "[Sample] MCP 分类示例：上下文接口要先做只读集成",
+      "sourceName": "Sample Source - MCP category",
+      "sourceUrl": "https://example.com/sample/mcp",
+      "category": "MCP",
+      "whatHappened": "这是一条 Sample 示例，用于展示 MCP 分类，不代表真实协议更新。",
+      "whyItMatters": "只读数据源可以先验证上下文质量和权限模型，再逐步引入写操作。",
+      "howToUse": "优先把知识库、Issue、文档搜索等低风险信息源封装为可查询上下文。",
+      "isSample": true
+    },
+    {
+      "date": "2026-05-27",
+      "title": "[Sample] AI Tools 分类示例：评估工具时关注工作流而非噱头",
+      "sourceName": "Sample Source - AI Tools category",
+      "sourceUrl": "https://example.com/sample/ai-tools",
+      "category": "AI Tools",
+      "whatHappened": "这是一条 Sample 示例，用于展示 AI Tools 分类，不代表真实产品发布。",
+      "whyItMatters": "工具是否能保存上下文、导出结果和接入自动化，通常比单次对话效果更影响团队采用。",
+      "howToUse": "建立评估清单：权限、导入导出、审计、协作、自动化触发器和价格。",
+      "isSample": true
+    },
+    {
+      "date": "2026-05-26",
+      "title": "[Sample] Content Creation 分类示例：内容流水线需要审核节点",
+      "sourceName": "Sample Source - Content Creation category",
+      "sourceUrl": "https://example.com/sample/content-creation",
+      "category": "Content Creation",
+      "whatHappened": "这是一条 Sample 示例，用于展示 Content Creation 分类，不代表真实平台动态。",
+      "whyItMatters": "AI 可以加速选题、脚本和分发，但审核节点能避免事实错误和品牌语气漂移。",
+      "howToUse": "为每个栏目维护 Prompt、素材库、事实核查表和发布前检查清单。",
+      "isSample": true
+    },
+    {
+      "date": "2026-05-25",
+      "title": "[Sample] Coding Agents 分类示例：PR 描述应记录 Agent 假设",
+      "sourceName": "Sample Source - Agent Review category",
+      "sourceUrl": "https://example.com/sample/agent-review",
+      "category": "Coding Agents",
+      "whatHappened": "这是一条 Sample 示例，用于展示第二条 Coding Agents 卡片，不代表真实工程博客。",
+      "whyItMatters": "记录 Agent 的假设、限制和测试结果，可以帮助审查者快速发现遗漏场景。",
+      "howToUse": "在真实 PR 模板中增加 Agent assumptions、verification 和 rollback plan。",
+      "isSample": true
+    },
+    {
+      "date": "2026-05-19",
+      "title": "[Sample Archive] 旧示例：不会出现在最近 7 天默认视图",
+      "sourceName": "Sample Source - Archive example",
+      "sourceUrl": "https://example.com/sample/archive",
+      "category": "AI Tools",
+      "whatHappened": "这是一条旧 Sample 示例，用于验证首页最近 7 天过滤逻辑。",
+      "whyItMatters": "保留旧数据可以支持未来归档页、趋势分析和全文搜索。",
+      "howToUse": "把历史日报继续追加到 JSON 或拆分到 reports 目录，首页仍只渲染最近 7 天。",
+      "isSample": true
+    }
+  ]
+}
