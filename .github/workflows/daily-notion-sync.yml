@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      JSON_PATH: ${{ inputs.json_path || 'data/sample.json' }}
+      INPUT_JSON_PATH: ${{ inputs.json_path || '' }}
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
       NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
       NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
@@ -37,18 +37,36 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Resolve daily JSON path
+        id: daily-json
+        run: |
+          if [ -n "$INPUT_JSON_PATH" ]; then
+            json_path="$INPUT_JSON_PATH"
+          else
+            json_path="data/$(TZ=Asia/Shanghai date +%F).json"
+          fi
+
+          echo "json_path=$json_path" >> "$GITHUB_OUTPUT"
+
+          if [ ! -f "$json_path" ]; then
+            echo "::error::Daily brief JSON not found: $json_path"
+            echo "::error::Generate data/$(TZ=Asia/Shanghai date +%F).json before the Notion sync job runs."
+            exit 1
+          fi
+
+      - name: Check Notion secrets
+        run: |
+          if [ -z "$NOTION_TOKEN" ] || [ -z "$NOTION_DATABASE_ID" ]; then
+            echo "::error::NOTION_TOKEN or NOTION_DATABASE_ID is not configured."
+            echo "::error::Dry-run alone does not write to Notion. Add both secrets in GitHub Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
       - name: Validate Notion mapping
         run: npm run notion:test
 
       - name: Dry-run Notion properties
-        run: node scripts/sync-to-notion.js "$JSON_PATH" --dry-run
+        run: node scripts/sync-to-notion.js "${{ steps.daily-json.outputs.json_path }}" --dry-run
 
       - name: Sync to Notion
-        if: ${{ env.NOTION_TOKEN != '' && env.NOTION_DATABASE_ID != '' }}
-        run: node scripts/sync-to-notion.js "$JSON_PATH"
-
-      - name: Skip real sync when secrets are missing
-        if: ${{ env.NOTION_TOKEN == '' || env.NOTION_DATABASE_ID == '' }}
-        run: |
-          echo "NOTION_TOKEN or NOTION_DATABASE_ID is not configured."
-          echo "Dry-run completed; real Notion sync was skipped."
+        run: node scripts/sync-to-notion.js "${{ steps.daily-json.outputs.json_path }}"
