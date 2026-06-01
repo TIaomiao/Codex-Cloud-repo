@@ -4,6 +4,10 @@
 
 > 注意：当前仓库自带的数据都明确标注为 Sample，仅用于演示页面结构与更新流程，不代表真实新闻。
 
+## 开源贡献草稿
+
+- `docs/litter-readme-zh-CN.md`：给 GitHub 新手准备的 dnakov/litter 项目说明、中文 README 草稿和首次 PR 提交流程。
+
 ## 项目结构
 
 ```text
